@@ -17,30 +17,22 @@ const NAV_ITEMS = [
   },
   {
     title: 'Crops',
-<<<<<<< HEAD
     href: '/crops/add',
-=======
-    href: '/crops',
->>>>>>> a5024703c699f51fe5d84806fe4b7577a6da1a26
     icon: <Leaf className="h-5 w-5" />,
   },
   {
     title: 'Expenses',
-<<<<<<< HEAD
     href: '/expenses/add',
-=======
-    href: '/expenses',
->>>>>>> a5024703c699f51fe5d84806fe4b7577a6da1a26
     icon: <ArrowDownCircle className="h-5 w-5" />,
   },
   {
     title: 'Income',
-    href: '/income',
+    href: '/income/add',
     icon: <ArrowUpCircle className="h-5 w-5" />,
   },
   {
-    title: 'Reports',
-    href: '/reports',
+    title: 'Profit & Loss',
+    href: '/reports/profit-loss',
     icon: <BarChart3 className="h-5 w-5" />,
   },
   {
