@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,15 +5,21 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { DataProvider } from "./contexts/DataContext";
+
+// Pages & Components
 import Layout from "./components/Layout";
+
+// Pages
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Dashboard from "./pages/Dashboard";
 import AddCrop from "./pages/crops/AddCrop";
-import AddExpense from "./pages/expenses/AddExpense"; 
-import AddIncome from "./pages/income/AddIncome"; 
-import Inventory from "./pages/inventory/Inventory"; 
-import AddInventory from "./pages/inventory/AddInventory";
+import AddExpense from "./pages/expenses/AddExpense";
+import Expenses from "./pages/expenses/Expenses";
+
+import AddIncome from "./pages/income/AddIncome";
+import IncomeList from "./pages/income/IncomeList";
+import ProfitLoss from "./pages/reports/ProfitLoss";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,12 +36,13 @@ const App = () => (
               {/* Auth Routes */}
               <Route path="/auth/login" element={<Login />} />
               <Route path="/auth/register" element={<Register />} />
-
+              
               {/* Protected Routes */}
               <Route path="/" element={<Layout />}>
                 <Route index element={<Navigate to="/dashboard" replace />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/crops/add" element={<AddCrop />} />
+                <Route path="/expenses" element={<Expenses />} /> {/* ✅ added */}
                 <Route path="/expenses/add" element={<AddExpense />} />
                 <Route path="/income/add" element={<AddIncome />} />
                 <Route path="/inventory" element={<Inventory />} />
@@ -53,6 +59,5 @@ const App = () => (
     </AuthProvider>
   </QueryClientProvider>
 );
-
 
 export default App;
