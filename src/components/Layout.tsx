@@ -17,12 +17,20 @@ const NAV_ITEMS = [
   },
   {
     title: 'Crops',
+<<<<<<< HEAD
+    href: '/crops/add',
+=======
     href: '/crops',
+>>>>>>> a5024703c699f51fe5d84806fe4b7577a6da1a26
     icon: <Leaf className="h-5 w-5" />,
   },
   {
     title: 'Expenses',
+<<<<<<< HEAD
+    href: '/expenses/add',
+=======
     href: '/expenses',
+>>>>>>> a5024703c699f51fe5d84806fe4b7577a6da1a26
     icon: <ArrowDownCircle className="h-5 w-5" />,
   },
   {
