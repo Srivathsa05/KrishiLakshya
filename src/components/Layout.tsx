@@ -3,7 +3,17 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { LayoutDashboard, Leaf, ArrowDownCircle, ArrowUpCircle, LogOut, BarChart3, User, Menu, X } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Leaf,
+  ArrowDownCircle,
+  ArrowUpCircle,
+  LogOut,
+  BarChart3,
+  User,
+  Menu,
+  X
+} from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useToast } from '@/components/ui/use-toast';
@@ -50,10 +60,11 @@ const Layout: React.FC = () => {
   const isMobile = useIsMobile();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
-  if (!user) {
-    navigate('/auth/login');
-    return null;
-  }
+  React.useEffect(() => {
+    if (!user) {
+      navigate('/auth/login');
+    }
+  }, [user, navigate]);
 
   const handleLogout = async () => {
     try {
@@ -109,13 +120,10 @@ const Layout: React.FC = () => {
               <h1 className="font-bold text-xl text-krishi-green">KrishiLakshya</h1>
               <p className="text-sm text-gray-500">Farm Financial Tracker</p>
             </div>
-            
             <Separator />
-            
             <ScrollArea className="flex-1 px-3 py-4">
               {renderNavItems()}
             </ScrollArea>
-            
             <div className="p-4">
               <Button
                 variant="outline"
@@ -134,7 +142,6 @@ const Layout: React.FC = () => {
       {isMobile && (
         <div className="fixed top-0 left-0 right-0 bg-white border-b z-10 p-4 flex items-center justify-between">
           <h1 className="font-bold text-xl text-krishi-green">KrishiLakshya</h1>
-          
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -149,13 +156,10 @@ const Layout: React.FC = () => {
                     <X className="h-5 w-5" />
                   </Button>
                 </div>
-                
                 <Separator />
-                
                 <ScrollArea className="flex-1 px-3 py-4">
                   {renderNavItems()}
                 </ScrollArea>
-                
                 <div className="p-4">
                   <Button
                     variant="outline"
