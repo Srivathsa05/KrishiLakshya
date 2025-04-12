@@ -11,8 +11,10 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Dashboard from "./pages/Dashboard";
 import AddCrop from "./pages/crops/AddCrop";
-import AddExpense from "./pages/expenses/AddExpense";
-import AddIncome from "./pages/income/AddIncome";
+import AddExpense from "./pages/expenses/AddExpense"; 
+import AddIncome from "./pages/income/AddIncome"; 
+import Inventory from "./pages/inventory/Inventory"; 
+import AddInventory from "./pages/inventory/AddInventory";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,11 +31,7 @@ const App = () => (
               {/* Auth Routes */}
               <Route path="/auth/login" element={<Login />} />
               <Route path="/auth/register" element={<Register />} />
-<<<<<<< HEAD
 
-=======
-              
->>>>>>> a5024703c699f51fe5d84806fe4b7577a6da1a26
               {/* Protected Routes */}
               <Route path="/" element={<Layout />}>
                 <Route index element={<Navigate to="/dashboard" replace />} />
@@ -41,14 +39,11 @@ const App = () => (
                 <Route path="/crops/add" element={<AddCrop />} />
                 <Route path="/expenses/add" element={<AddExpense />} />
                 <Route path="/income/add" element={<AddIncome />} />
-<<<<<<< HEAD
+                <Route path="/inventory" element={<Inventory />} />
+                <Route path="/inventory/add" element={<AddInventory />} />
+                
               </Route>
 
-=======
-                {/* Add more routes as needed */}
-              </Route>
-              
->>>>>>> a5024703c699f51fe5d84806fe4b7577a6da1a26
               {/* Catch all */}
               <Route path="*" element={<NotFound />} />
             </Routes>
@@ -59,8 +54,5 @@ const App = () => (
   </QueryClientProvider>
 );
 
-<<<<<<< HEAD
 
-=======
->>>>>>> a5024703c699f51fe5d84806fe4b7577a6da1a26
 export default App;
