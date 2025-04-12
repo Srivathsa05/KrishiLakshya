@@ -33,6 +33,7 @@ const App = () => (
               <Route path="/auth/login" element={<Login />} />
               <Route path="/auth/register" element={<Register />} />
 
+
               {/* Protected Routes */}
               <Route path="/" element={<Layout />}>
                 <Route index element={<Navigate to="/dashboard" replace />} />
@@ -44,6 +45,7 @@ const App = () => (
                 {/* Add more routes as needed */}
               </Route>
 
+{">"}{">"}{">"}{">"}{">"}{">"}{">"} a5024703c699f51fe5d84806fe4b7577a6da1a26
               {/* Catch all */}
               <Route path="*" element={<NotFound />} />
             </Routes>

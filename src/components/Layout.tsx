@@ -27,12 +27,12 @@ const NAV_ITEMS = [
   },
   {
     title: 'Crops',
-    href: '/crops',
+    href: '/crops/add',
     icon: <Leaf className="h-5 w-5" />,
   },
   {
     title: 'Expenses',
-    href: '/expenses', // 🔥 Make sure this matches your actual route
+    href: '/expenses/add',
     icon: <ArrowDownCircle className="h-5 w-5" />,
   },
   {
