@@ -1,3 +1,5 @@
+// src/App.tsx
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -37,19 +39,18 @@ const App = () => (
               <Route path="/auth/login" element={<Login />} />
               <Route path="/auth/register" element={<Register />} />
 
-
               {/* Protected Routes */}
               <Route path="/" element={<Layout />}>
                 <Route index element={<Navigate to="/dashboard" replace />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/crops/add" element={<AddCrop />} />
-                <Route path="/expenses" element={<Expenses />} /> {/* ✅ added */}
+                <Route path="/expenses" element={<Expenses />} />
                 <Route path="/expenses/add" element={<AddExpense />} />
-                <Route path="/income/add" element={<AddIncome />} />
-                {/* Add more routes as needed */}
+                <Route path="/income" element={<IncomeList />} /> {/* ✅ Income List */}
+                <Route path="/income/add" element={<AddIncome />} /> {/* ✅ Add Income */}
+                <Route path="/reports/profit-loss" element={<ProfitLoss />} />
               </Route>
 
-{">"}{">"}{">"}{">"}{">"}{">"}{">"} a5024703c699f51fe5d84806fe4b7577a6da1a26
               {/* Catch all */}
               <Route path="*" element={<NotFound />} />
             </Routes>

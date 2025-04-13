@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Crop } from '../models/Crop';
 import { Expense } from '../models/Expense';
 import { Income } from '../models/Income';
@@ -36,6 +36,43 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [crops, setCrops] = useState<Crop[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [incomes, setIncomes] = useState<Income[]>([]);
+
+  // Load sample crops on mount
+  useEffect(() => {
+    if (user && crops.length === 0) {
+      const sampleCrops: Crop[] = [
+        {
+          id: '1',
+          userId: user.id,
+          name: 'Wheat',
+          type: 'Grain',
+          area: 10,
+          areaUnit: 'acre',
+          plantingDate: new Date(),
+          season: 'Rabi',
+          status: 'active',
+          expectedHarvestDate: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: '2',
+          userId: user.id,
+          name: 'Tomato',
+          type: 'Vegetable',
+          area: 5,
+          areaUnit: 'acre',
+          plantingDate: new Date(),
+          season: 'Kharif',
+          status: 'active',
+          expectedHarvestDate: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ];
+      setCrops(sampleCrops);
+    }
+  }, [user, crops]);
 
   // Add crop
   const addCrop = async (
