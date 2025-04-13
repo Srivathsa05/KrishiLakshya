@@ -1,4 +1,3 @@
-
 export interface Crop {
   id: string;
   userId: string;
@@ -7,8 +6,7 @@ export interface Crop {
   areaUnit: string;
   plantingDate: Date;
   season: string;
-  status: 'active' | 'harvested' | 'failed';
-  expectedHarvestDate?: Date;
+  status: 'active' | 'harvested';
   notes?: string;
   createdAt: Date;
   updatedAt: Date;

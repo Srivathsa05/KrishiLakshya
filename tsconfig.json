@@ -7,7 +7,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["src/*"],
+      "@/models/*": ["src/models/*"],
+      "@/contexts/*": ["src/contexts/*"]
     },
     "noImplicitAny": false,
     "noUnusedParameters": false,
