@@ -27,8 +27,6 @@ const IncomeList: React.FC = () => {
     queryFn: fetchIncomes,
   });
 
-  if (isLoading) return <div>Loading income data...</div>;
-  if (isError) return <div>Error loading incomes.</div>;
 
   return (
     <div className="p-4">

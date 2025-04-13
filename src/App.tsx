@@ -1,6 +1,4 @@
-// src/App.tsx
-
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Providers
@@ -22,8 +20,10 @@ import Expenses from "./pages/expenses/Expenses";
 import AddIncome from "./pages/income/AddIncome";
 import IncomeList from "./pages/income/IncomeList";
 import ProfitLoss from "./pages/reports/ProfitLoss";
+import ReportsLayout from "./pages/reports/ReportsLayout"; // ✅ Import
 import NotFound from "./pages/NotFound";
-import Index from "./pages/Index"; // Landing page with redirect logic
+import Index from "./pages/Index";
+import Profile from "./pages/profile/profile";
 
 const queryClient = new QueryClient();
 
@@ -41,7 +41,7 @@ const App = () => {
                 <Route path="/auth/login" element={<Login />} />
                 <Route path="/auth/register" element={<Register />} />
 
-                {/* Protected Layout with Nested Routes */}
+                {/* Protected Layout */}
                 <Route path="/" element={<Layout />}>
                   <Route index element={<Index />} />
                   <Route path="dashboard" element={<Dashboard />} />
@@ -51,10 +51,14 @@ const App = () => {
                   <Route path="expenses/add" element={<AddExpense />} />
                   <Route path="income" element={<IncomeList />} />
                   <Route path="income/add" element={<AddIncome />} />
-                  <Route path="reports/profit-loss" element={<ProfitLoss />} />
+                  <Route path="profile" element={<Profile/>} />
+                  {/* ✅ Reports with nested layout */}
+                  <Route path="reports" element={<ReportsLayout />}>
+                    <Route index element={<ProfitLoss />} />
+                  </Route>
                 </Route>
 
-                {/* Catch-all 404 */}
+                {/* 404 Catch-all */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

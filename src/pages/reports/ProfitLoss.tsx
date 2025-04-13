@@ -1,5 +1,14 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Pie } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 type Income = { id: number; amount: number };
 type Expense = { id: number; amount: number };
@@ -44,14 +53,43 @@ const ProfitLoss = () => {
   const totalExpense = expenses?.reduce((sum, expense) => sum + expense.amount, 0) ?? 0;
   const profit = totalIncome - totalExpense;
 
+  const chartData = {
+    labels: ["Income", "Expenses"],
+    datasets: [
+      {
+        label: "Financial Summary",
+        data: [totalIncome, totalExpense],
+        backgroundColor: ["#16a34a", "#dc2626"], // Green and Red
+        borderColor: ["#15803d", "#b91c1c"],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "bottom" as const,
+      },
+    },
+  };
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Profit & Loss Report</h1>
-      <div className="space-y-2">
-        <div>Total Income: ₹{totalIncome.toFixed(2)}</div>
-        <div>Total Expenses: ₹{totalExpense.toFixed(2)}</div>
-        <div className={`font-semibold ${profit >= 0 ? "text-green-600" : "text-red-600"}`}>
-          {profit >= 0 ? "Profit" : "Loss"}: ₹{Math.abs(profit).toFixed(2)}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <div>Total Income: ₹{totalIncome.toFixed(2)}</div>
+          <div>Total Expenses: ₹{totalExpense.toFixed(2)}</div>
+          <div className={`font-semibold ${profit >= 0 ? "text-green-600" : "text-red-600"}`}>
+            {profit >= 0 ? "Profit" : "Loss"}: ₹{Math.abs(profit).toFixed(2)}
+          </div>
+        </div>
+
+        <div className="w-full max-w-md mx-auto">
+          <Pie data={chartData} options={chartOptions} />
         </div>
       </div>
     </div>
