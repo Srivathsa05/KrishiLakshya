@@ -32,6 +32,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [crops, setCrops] = useState<Crop[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [incomes, setIncomes] = useState<Income[]>([]);
+ 
 
   // Add a new crop
   const addCrop = async (cropData: Omit<Crop, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<Crop> => {

@@ -12,7 +12,7 @@ import {
   BarChart3,
   User,
   Menu,
-  X
+  X,
 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -20,36 +20,12 @@ import { useToast } from '@/components/ui/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const NAV_ITEMS = [
-  {
-    title: 'Dashboard',
-    href: '/dashboard',
-    icon: <LayoutDashboard className="h-5 w-5" />,
-  },
-  {
-    title: 'Crops',
-    href: '/crops/add',
-    icon: <Leaf className="h-5 w-5" />,
-  },
-  {
-    title: 'Expenses',
-    href: '/expenses/add',
-    icon: <ArrowDownCircle className="h-5 w-5" />,
-  },
-  {
-    title: 'Income',
-    href: '/income/add',
-    icon: <ArrowUpCircle className="h-5 w-5" />,
-  },
-  {
-    title: 'Profit & Loss',
-    href: '/reports/profit-loss',
-    icon: <BarChart3 className="h-5 w-5" />,
-  },
-  {
-    title: 'Profile',
-    href: '/profile',
-    icon: <User className="h-5 w-5" />,
-  },
+  { title: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard className="h-5 w-5" /> },
+  { title: 'Crops', href: '/crops', icon: <Leaf className="h-5 w-5" /> },
+  { title: 'Expenses', href: '/expenses', icon: <ArrowDownCircle className="h-5 w-5" /> },
+  { title: 'Income', href: '/income', icon: <ArrowUpCircle className="h-5 w-5" /> },
+  { title: 'Reports', href: '/reports', icon: <BarChart3 className="h-5 w-5" /> },
+  { title: 'Profile', href: '/profile', icon: <User className="h-5 w-5" /> },
 ];
 
 const Layout: React.FC = () => {
@@ -87,7 +63,8 @@ const Layout: React.FC = () => {
   const renderNavItems = () => (
     <div className="space-y-1">
       {NAV_ITEMS.map((item) => {
-        const isActive = location.pathname === item.href || location.pathname.startsWith(`${item.href}/`);
+        const isActive =
+          location.pathname === item.href || location.pathname.startsWith(`${item.href}/`);
         return (
           <Button
             key={item.href}
@@ -97,9 +74,7 @@ const Layout: React.FC = () => {
             }`}
             onClick={() => {
               navigate(item.href);
-              if (isMobile) {
-                setMobileMenuOpen(false);
-              }
+              if (isMobile) setMobileMenuOpen(false);
             }}
           >
             <span className="mr-2">{item.icon}</span>
@@ -121,9 +96,7 @@ const Layout: React.FC = () => {
               <p className="text-sm text-gray-500">Farm Financial Tracker</p>
             </div>
             <Separator />
-            <ScrollArea className="flex-1 px-3 py-4">
-              {renderNavItems()}
-            </ScrollArea>
+            <ScrollArea className="flex-1 px-3 py-4">{renderNavItems()}</ScrollArea>
             <div className="p-4">
               <Button
                 variant="outline"
@@ -157,9 +130,7 @@ const Layout: React.FC = () => {
                   </Button>
                 </div>
                 <Separator />
-                <ScrollArea className="flex-1 px-3 py-4">
-                  {renderNavItems()}
-                </ScrollArea>
+                <ScrollArea className="flex-1 px-3 py-4">{renderNavItems()}</ScrollArea>
                 <div className="p-4">
                   <Button
                     variant="outline"
