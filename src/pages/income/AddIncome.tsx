@@ -4,6 +4,8 @@ import { useData } from '../../contexts/DataContext';
 import {
   Card,
   CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -17,7 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ArrowUpCircle } from 'lucide-react';
 
 const AddIncome: React.FC = () => {
   const { crops, addIncome } = useData();
@@ -84,64 +86,70 @@ const AddIncome: React.FC = () => {
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-2xl">
-      <div className="flex items-center justify-between mb-4">
-        <Button variant="ghost" onClick={() => navigate(-1)}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
-        </Button>
-      </div>
-
       <Card>
         <CardHeader>
-          <CardTitle>Add Income</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-2xl">
+            <ArrowUpCircle className="w-6 h-6 text-krishi-green" />
+            Add Income
+          </CardTitle>
+          <CardDescription>Record income details from your crops</CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+
+        <form onSubmit={handleSubmit}>
+          <CardContent className="space-y-4">
             <div>
-              <label className="block text-sm font-medium">Crop</label>
-              <Select onValueChange={setCropId}>
-                <SelectTrigger>
+              <label className="block font-medium mb-1">Crop</label>
+              <Select onValueChange={setCropId} value={cropId}>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select crop" />
                 </SelectTrigger>
                 <SelectContent>
-                  {crops.map((crop) => (
-                    <SelectItem key={crop.id} value={crop.id}>
-                      {crop.name}
-                    </SelectItem>
-                  ))}
+                  {crops.length > 0 ? (
+                    crops.map((crop) => (
+                      <SelectItem key={crop.id} value={crop.id}>
+                        {crop.name} ({crop.type})
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <div className="p-2 text-gray-500 text-sm">No crops available</div>
+                  )}
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium">Quantity</label>
-                <Input
-                  type="number"
-                  value={quantity}
-                  onChange={(e) => setQuantity(e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Unit</label>
-                <Select value={unit} onValueChange={setUnit}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="kg">kg</SelectItem>
-                    <SelectItem value="quintal">quintal</SelectItem>
-                    <SelectItem value="ton">ton</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div>
+              <label className="block font-medium mb-1">Quantity</label>
+              <Input
+                type="number"
+                min="0"
+                step="any"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                required
+              />
             </div>
 
             <div>
-              <label className="block text-sm font-medium">Price Per Unit</label>
+              <label className="block font-medium mb-1">Unit</label>
+              <Select value={unit} onValueChange={setUnit}>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="kg">Kilograms (kg)</SelectItem>
+                  <SelectItem value="quintal">Quintals</SelectItem>
+                  <SelectItem value="ton">Tons</SelectItem>
+                  <SelectItem value="litre">Litres</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="block font-medium mb-1">Price per Unit</label>
               <Input
                 type="number"
+                min="0"
+                step="any"
                 value={pricePerUnit}
                 onChange={(e) => setPricePerUnit(e.target.value)}
                 required
@@ -149,15 +157,16 @@ const AddIncome: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium">Buyer</label>
+              <label className="block font-medium mb-1">Buyer (Optional)</label>
               <Input
+                type="text"
                 value={buyer}
                 onChange={(e) => setBuyer(e.target.value)}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium">Date</label>
+              <label className="block font-medium mb-1">Date</label>
               <Input
                 type="date"
                 value={date}
@@ -167,20 +176,28 @@ const AddIncome: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium">Notes</label>
+              <label className="block font-medium mb-1">Notes (Optional)</label>
               <Input
+                type="text"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
               />
             </div>
+          </CardContent>
 
-            <div className="text-right">
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? 'Adding...' : `Add Income (₹${amount})`}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
+          <CardFooter className="flex justify-between mt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate(-1)}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" /> Cancel
+            </Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? 'Saving...' : 'Save Income'}
+            </Button>
+          </CardFooter>
+        </form>
       </Card>
     </div>
   );

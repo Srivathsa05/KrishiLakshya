@@ -1,126 +1,154 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useData } from "@/contexts/DataContext";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useData } from "@/contexts/DataContext";
+import { Textarea } from "@/components/ui/textarea";
 
-const Dashboard: React.FC = () => {
+type ExpenseType = "seed" | "fertilizer" | "pesticide" | "labor" | "equipment" | "others";
+
+interface ExpenseFormData {
+  amount: string;
+  category: string;
+  type: ExpenseType;
+  description: string;
+  date: string; // still string for the form
+  note?: string;
+}
+
+const AddExpense: React.FC = () => {
   const navigate = useNavigate();
-  const { crops, incomes, expenses } = useData();
+  const { addExpense } = useData();
 
-  const totalIncome = incomes.reduce((acc, curr) => acc + curr.amount, 0);
-  const totalExpenses = expenses.reduce((acc, curr) => acc + curr.amount, 0);
-  const totalProfit = totalIncome - totalExpenses;
+  const [formData, setFormData] = useState<ExpenseFormData>({
+    amount: "",
+    category: "",
+    type: "others",
+    description: "",
+    date: new Date().toISOString().split("T")[0], // e.g., "2025-04-13"
+    note: "",
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value as any }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const newExpense = {
+      amount: parseFloat(formData.amount),
+      category: formData.category,
+      type: formData.type,
+      description: formData.description,
+      date: new Date(formData.date), // ✅ convert string to Date object
+      note: formData.note || "",
+    };
+
+    await addExpense(newExpense);
+    navigate("/expenses");
+  };
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-green-400">Dashboard</h1>
-      <p className="text-lg text-muted-foreground">Welcome back, samarthpv69!</p>
+    <div className="p-6">
+      <Card className="max-w-xl mx-auto">
+        <CardHeader>
+          <CardTitle>Add New Expense</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="amount">Amount (₹)</Label>
+              <Input
+                id="amount"
+                name="amount"
+                type="number"
+                required
+                value={formData.amount}
+                onChange={handleChange}
+              />
+            </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Total Profit</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold">₹{totalProfit}</p>
-            <p className="text-muted-foreground">Financial summary</p>
-          </CardContent>
-        </Card>
+            <div>
+              <Label htmlFor="category">Category</Label>
+              <Input
+                id="category"
+                name="category"
+                required
+                value={formData.category}
+                onChange={handleChange}
+                placeholder="e.g. Fertilizer A"
+              />
+            </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Total Income</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold">₹{totalIncome}</p>
-            <p className="text-muted-foreground">{incomes.length} transactions</p>
-          </CardContent>
-        </Card>
+            <div>
+              <Label htmlFor="type">Type</Label>
+              <select
+                id="type"
+                name="type"
+                required
+                value={formData.type}
+                onChange={handleChange}
+                className="w-full border rounded px-3 py-2"
+              >
+                <option value="seed">Seed</option>
+                <option value="fertilizer">Fertilizer</option>
+                <option value="pesticide">Pesticide</option>
+                <option value="labor">Labor</option>
+                <option value="equipment">Equipment</option>
+                <option value="others">Others</option>
+              </select>
+            </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Total Expenses</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-semibold">₹{totalExpenses}</p>
-            <p className="text-muted-foreground">{expenses.length} transactions</p>
-          </CardContent>
-        </Card>
-      </div>
+            <div>
+              <Label htmlFor="description">Description</Label>
+              <Input
+                id="description"
+                name="description"
+                required
+                value={formData.description}
+                onChange={handleChange}
+              />
+            </div>
 
-      {/* Active Crops and Transactions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle>🌱 Active Crops</CardTitle>
-              <Button size="sm" variant="outline" onClick={() => navigate("/crops")}>
-                View All
+            <div>
+              <Label htmlFor="date">Date</Label>
+              <Input
+                id="date"
+                name="date"
+                type="date"
+                required
+                value={formData.date}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="note">Note (Optional)</Label>
+              <Textarea
+                id="note"
+                name="note"
+                value={formData.note}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="flex justify-between">
+              <Button type="submit">Add Expense</Button>
+              <Button type="button" variant="outline" onClick={() => navigate("/expenses")}>
+                Cancel
               </Button>
             </div>
-          </CardHeader>
-          <CardContent>
-            {crops.length === 0 ? (
-              <div className="text-center space-y-2">
-                <p>No crops added yet</p>
-                <Button onClick={() => navigate("/crops/add")}>Add New Crop</Button>
-              </div>
-            ) : (
-              <ul className="list-disc pl-4">
-                {crops.slice(0, 3).map((crop) => (
-                  <li key={crop.id}>
-                    {crop.name} ({crop.area} {crop.areaUnit})
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle>💰 Recent Transactions</CardTitle>
-              <div className="space-x-2">
-                <Button size="sm" variant="outline" onClick={() => navigate("/expenses/add")}>
-                  Expenses
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => navigate("/income/add")}>
-                  Income
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {expenses.length === 0 && incomes.length === 0 ? (
-              <div className="text-center space-y-2">
-                <p>No transactions yet</p>
-                <div className="flex justify-center gap-2">
-                  <Button onClick={() => navigate("/expenses/add")}>Add Expense</Button>
-                  <Button variant="outline" onClick={() => navigate("/income/add")}>
-                    Add Income
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <ul className="list-disc pl-4">
-                {[...expenses.map(e => ({ ...e, type: "Expense" })), ...incomes.map(i => ({ ...i, type: "Income" }))]
-                  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                  .slice(0, 5)
-                  .map((txn, idx) => (
-                    <li key={idx}>
-                      {txn.type} - ₹{txn.amount} on {new Date(txn.date).toLocaleDateString()}
-                    </li>
-                  ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };
 
-export default Dashboard;
+export default AddExpense;

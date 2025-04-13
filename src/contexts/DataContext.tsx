@@ -9,13 +9,12 @@ interface InventoryItem {
   type: string;
   quantity: number;
   unit: string;
-  threshold: number; // Low stock threshold
-  cropId?: string; // Optional crop association
+  threshold: number;
+  cropId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-// Type for the context value
 interface DataContextType {
   crops: Crop[];
   expenses: Expense[];
@@ -31,10 +30,8 @@ interface DataContextType {
   getLowStockItems: () => InventoryItem[];
 }
 
-// Create context
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
-// Hook to access context
 export const useData = (): DataContextType => {
   const context = useContext(DataContext);
   if (!context) {
@@ -43,7 +40,6 @@ export const useData = (): DataContextType => {
   return context;
 };
 
-// Provider component
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
 
@@ -52,7 +48,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [incomes, setIncomes] = useState<Income[]>([]);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
 
-  // Load sample crops on mount
   useEffect(() => {
     if (user && crops.length === 0) {
       const sampleCrops: Crop[] = [
@@ -89,7 +84,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [user, crops]);
 
-  // Add crop
   const addCrop = async (
     cropData: Omit<Crop, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
   ): Promise<Crop> => {
@@ -105,7 +99,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return newCrop;
   };
 
-  // Add expense
   const addExpense = async (
     expenseData: Omit<Expense, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
   ): Promise<Expense> => {
@@ -121,7 +114,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return newExpense;
   };
 
-  // Add income
   const addIncome = async (
     incomeData: Omit<Income, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
   ): Promise<Income> => {
@@ -137,46 +129,41 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return newIncome;
   };
 
-  // Add a new inventory item
-  const addInventoryItem = async (itemData: Omit<InventoryItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<InventoryItem> => {
+  const addInventoryItem = async (
+    itemData: Omit<InventoryItem, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<InventoryItem> => {
     if (!user) throw new Error('User must be logged in');
-
     const newItem: InventoryItem = {
       id: Date.now().toString(),
       ...itemData,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-
-    setInventory((prevInventory) => [...prevInventory, newItem]);
+    setInventory((prev) => [...prev, newItem]);
     return newItem;
   };
 
-  // Get low stock items
   const getLowStockItems = (): InventoryItem[] => {
     return inventory.filter((item) => item.quantity <= item.threshold);
   };
 
-  // Total expenses for a crop (or all)
   const getTotalExpenses = (cropId?: string): number => {
     return expenses
       .filter((e) => !cropId || e.cropId === cropId)
       .reduce((sum, e) => sum + e.amount, 0);
   };
 
-  // Total income for a crop (or all)
   const getTotalIncome = (cropId?: string): number => {
     return incomes
       .filter((i) => !cropId || i.cropId === cropId)
       .reduce((sum, i) => sum + i.amount, 0);
   };
 
-  // Profit for a crop (or overall)
   const getProfit = (cropId?: string): number => {
     return getTotalIncome(cropId) - getTotalExpenses(cropId);
   };
 
-  const value = {
+  const value: DataContextType = {
     crops,
     expenses,
     incomes,
@@ -192,21 +179,4 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
-  return (
-    <DataContext.Provider
-      value={{
-        crops,
-        expenses,
-        incomes,
-        addCrop,
-        addExpense,
-        addIncome,
-        getTotalExpenses,
-        getTotalIncome,
-        getProfit,
-      }}
-    >
-      {children}
-    </DataContext.Provider>
-  );
 };
