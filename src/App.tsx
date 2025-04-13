@@ -38,7 +38,11 @@ const App = () => (
               {/* Auth Routes */}
               <Route path="/auth/login" element={<Login />} />
               <Route path="/auth/register" element={<Register />} />
+<<<<<<< HEAD
 
+=======
+              
+>>>>>>> beec5e8e6ace1efb6691438d6e828628f4884604
               {/* Protected Routes */}
               <Route path="/" element={<Layout />}>
                 <Route index element={<Navigate to="/dashboard" replace />} />
@@ -46,9 +50,16 @@ const App = () => (
                 <Route path="/crops/add" element={<AddCrop />} />
                 <Route path="/expenses" element={<Expenses />} />
                 <Route path="/expenses/add" element={<AddExpense />} />
+<<<<<<< HEAD
                 <Route path="/income" element={<IncomeList />} /> {/* ✅ Income List */}
                 <Route path="/income/add" element={<AddIncome />} /> {/* ✅ Add Income */}
                 <Route path="/reports/profit-loss" element={<ProfitLoss />} />
+=======
+                <Route path="/income/add" element={<AddIncome />} />
+                <Route path="/inventory" element={<Inventory />} />
+                <Route path="/inventory/add" element={<AddInventory />} />
+                
+>>>>>>> beec5e8e6ace1efb6691438d6e828628f4884604
               </Route>
 
               {/* Catch all */}

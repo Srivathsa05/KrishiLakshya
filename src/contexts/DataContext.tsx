@@ -4,17 +4,31 @@ import { Expense } from '../models/Expense';
 import { Income } from '../models/Income';
 import { useAuth } from './AuthContext';
 
+interface InventoryItem {
+  id: string;
+  type: string;
+  quantity: number;
+  unit: string;
+  threshold: number; // Low stock threshold
+  cropId?: string; // Optional crop association
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // Type for the context value
 interface DataContextType {
   crops: Crop[];
   expenses: Expense[];
   incomes: Income[];
+  inventory: InventoryItem[];
   addCrop: (crop: Omit<Crop, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => Promise<Crop>;
   addExpense: (expense: Omit<Expense, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => Promise<Expense>;
   addIncome: (income: Omit<Income, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => Promise<Income>;
+  addInventoryItem: (item: Omit<InventoryItem, 'id' | 'createdAt' | 'updatedAt'>) => Promise<InventoryItem>;
   getTotalExpenses: (cropId?: string) => number;
   getTotalIncome: (cropId?: string) => number;
   getProfit: (cropId?: string) => number;
+  getLowStockItems: () => InventoryItem[];
 }
 
 // Create context
@@ -36,6 +50,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [crops, setCrops] = useState<Crop[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [incomes, setIncomes] = useState<Income[]>([]);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
 
   // Load sample crops on mount
   useEffect(() => {
@@ -122,6 +137,26 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return newIncome;
   };
 
+  // Add a new inventory item
+  const addInventoryItem = async (itemData: Omit<InventoryItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<InventoryItem> => {
+    if (!user) throw new Error('User must be logged in');
+
+    const newItem: InventoryItem = {
+      id: Date.now().toString(),
+      ...itemData,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    setInventory((prevInventory) => [...prevInventory, newItem]);
+    return newItem;
+  };
+
+  // Get low stock items
+  const getLowStockItems = (): InventoryItem[] => {
+    return inventory.filter((item) => item.quantity <= item.threshold);
+  };
+
   // Total expenses for a crop (or all)
   const getTotalExpenses = (cropId?: string): number => {
     return expenses
@@ -141,6 +176,22 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return getTotalIncome(cropId) - getTotalExpenses(cropId);
   };
 
+  const value = {
+    crops,
+    expenses,
+    incomes,
+    inventory,
+    addCrop,
+    addExpense,
+    addIncome,
+    addInventoryItem,
+    getTotalExpenses,
+    getTotalIncome,
+    getProfit,
+    getLowStockItems,
+  };
+
+  return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
   return (
     <DataContext.Provider
       value={{
