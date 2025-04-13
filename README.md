@@ -73,9 +73,13 @@ Clone the repository
 bash
 Copy
 Edit
-git clone https://github.com/yourusername/krishilakshya.git
-cd krishilakshya
+git clone https://github.com/Srivathsa05/KrishiLakshya.git 
+
+cd KrishiLakshya
+
+
 Install dependencies
+
 
 bash
 Copy
