@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../../contexts/DataContext';
 import {
@@ -34,6 +34,11 @@ const AddIncome: React.FC = () => {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [notes, setNotes] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Log crops for debugging
+  useEffect(() => {
+    console.log('Loaded crops:', crops);
+  }, [crops]);
 
   const amount =
     quantity && pricePerUnit
@@ -92,29 +97,33 @@ const AddIncome: React.FC = () => {
             <ArrowUpCircle className="w-6 h-6 text-krishi-green" />
             Add Income
           </CardTitle>
-          <CardDescription>Record income details from your crops</CardDescription>
+          <CardDescription>
+            Record income details from your crops
+          </CardDescription>
         </CardHeader>
 
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div>
               <label className="block font-medium mb-1">Crop</label>
-              <Select onValueChange={setCropId} value={cropId}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select crop" />
-                </SelectTrigger>
-                <SelectContent>
-                  {crops.length > 0 ? (
-                    crops.map((crop) => (
+              {crops.length > 0 ? (
+                <Select onValueChange={setCropId} value={cropId}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select crop" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {crops.map((crop) => (
                       <SelectItem key={crop.id} value={crop.id}>
                         {crop.name} ({crop.type})
                       </SelectItem>
-                    ))
-                  ) : (
-                    <div className="p-2 text-gray-500 text-sm">No crops available</div>
-                  )}
-                </SelectContent>
-              </Select>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <div className="text-sm text-muted-foreground italic px-2 py-2 rounded border border-dashed">
+                  No crops available. Please add a crop first.
+                </div>
+              )}
             </div>
 
             <div>
@@ -193,7 +202,7 @@ const AddIncome: React.FC = () => {
             >
               <ArrowLeft className="mr-2 h-4 w-4" /> Cancel
             </Button>
-            <Button type="submit" disabled={isLoading}>
+            <Button type="submit" disabled={isLoading || crops.length === 0}>
               {isLoading ? 'Saving...' : 'Save Income'}
             </Button>
           </CardFooter>

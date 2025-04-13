@@ -14,7 +14,7 @@ interface ExpenseFormData {
   category: string;
   type: ExpenseType;
   description: string;
-  date: string; // still string for the form
+  date: string; // For the input field (YYYY-MM-DD)
   note?: string;
 }
 
@@ -27,7 +27,7 @@ const AddExpense: React.FC = () => {
     category: "",
     type: "others",
     description: "",
-    date: new Date().toISOString().split("T")[0], // e.g., "2025-04-13"
+    date: new Date().toISOString().split("T")[0], // Format as YYYY-MM-DD
     note: "",
   });
 
@@ -35,19 +35,25 @@ const AddExpense: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value as any }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const parsedAmount = parseFloat(formData.amount);
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      alert("Please enter a valid positive amount.");
+      return;
+    }
+
     const newExpense = {
-      amount: parseFloat(formData.amount),
-      category: formData.category,
+      amount: parsedAmount,
+      category: formData.category.trim(),
       type: formData.type,
-      description: formData.description,
-      date: new Date(formData.date), // ✅ convert string to Date object
-      note: formData.note || "",
+      description: formData.description.trim(),
+      date: new Date(formData.date), // Convert to Date
+      note: formData.note?.trim() || "",
     };
 
     await addExpense(newExpense);
@@ -69,6 +75,8 @@ const AddExpense: React.FC = () => {
                 name="amount"
                 type="number"
                 required
+                min="0"
+                step="0.01"
                 value={formData.amount}
                 onChange={handleChange}
               />
@@ -140,7 +148,11 @@ const AddExpense: React.FC = () => {
 
             <div className="flex justify-between">
               <Button type="submit">Add Expense</Button>
-              <Button type="button" variant="outline" onClick={() => navigate("/expenses")}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate("/expenses")}
+              >
                 Cancel
               </Button>
             </div>

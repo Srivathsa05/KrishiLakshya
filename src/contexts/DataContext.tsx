@@ -1,156 +1,141 @@
+  import React, { createContext, useContext, useState, useEffect } from 'react';
+  import { Crop } from '../models/Crop';
+  import { Expense } from '../models/Expense';
+  import { Income } from '../models/Income';
+  import { useAuth } from './AuthContext';
 
-import React, { createContext, useContext, useState } from 'react';
-import { Crop } from '../models/Crop';
-import { Expense } from '../models/Expense';
-import { Income } from '../models/Income';
-import { useAuth } from './AuthContext';
-
-interface DataContextType {
-  crops: Crop[];
-  expenses: Expense[];
-  incomes: Income[];
-  addCrop: (crop: Omit<Crop, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => Promise<Crop>;
-  addExpense: (expense: Omit<Expense, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => Promise<Expense>;
-  addIncome: (income: Omit<Income, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => Promise<Income>;
-  getTotalExpenses: (cropId?: string) => number;
-  getTotalIncome: (cropId?: string) => number;
-  getProfit: (cropId?: string) => number;
-}
-
-const DataContext = createContext<DataContextType | undefined>(undefined);
-
-export const useData = () => {
-  const context = useContext(DataContext);
-  if (context === undefined) {
-    throw new Error('useData must be used within a DataProvider');
+  export interface InventoryItem {
+    id: string;
+    name: string;
+    type: string;
+    quantity: number;
+    unit: string;
+    threshold: number;
+    userId: string;
+    createdAt: Date;
+    updatedAt: Date;
   }
-  return context;
-};
 
-export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
-  const [crops, setCrops] = useState<Crop[]>([]);
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [incomes, setIncomes] = useState<Income[]>([]);
-  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  interface DataContextType {
+    crops: Crop[];
+    expenses: Expense[];
+    incomes: Income[];
+    inventory: InventoryItem[];
+    addCrop: (crop: Omit<Crop, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => Promise<Crop>;
+    addExpense: (expense: Omit<Expense, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => Promise<Expense>;
+    addIncome: (income: Omit<Income, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => Promise<Income>;
+    addInventoryItem: (item: Omit<InventoryItem, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => Promise<InventoryItem>;
+    getTotalExpenses: (cropId?: string) => number;
+    getTotalIncome: (cropId?: string) => number;
+    getProfit: (cropId?: string) => number;
+  }
 
-  // Load sample crops on mount
-  useEffect(() => {
-    if (user && crops.length === 0) {
-      const sampleCrops: Crop[] = [
-        {
-          id: '1',
-          userId: user.id,
-          name: 'Wheat',
-          type: 'Grain',
-          area: 10,
-          areaUnit: 'acre',
-          plantingDate: new Date(),
-          season: 'Rabi',
-          status: 'active',
-          expectedHarvestDate: new Date(),
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          id: '2',
-          userId: user.id,
-          name: 'Tomato',
-          type: 'Vegetable',
-          area: 5,
-          areaUnit: 'acre',
-          plantingDate: new Date(),
-          season: 'Kharif',
-          status: 'active',
-          expectedHarvestDate: new Date(),
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      ];
-      setCrops(sampleCrops);
+  const DataContext = createContext<DataContextType | undefined>(undefined);
+
+  export const useData = () => {
+    const context = useContext(DataContext);
+    if (!context) {
+      throw new Error('useData must be used within a DataProvider');
     }
-  }, [user, crops]);
+    return context;
+  };
 
-  // Add crop
-  const addCrop = async (
-    cropData: Omit<Crop, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
-  ): Promise<Crop> => {
-    if (!user) throw new Error('User must be logged in');
-    
-    const newCrop: Crop = {
-      id: Date.now().toString(),
-      userId: user.id,
-      ...cropData,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+  export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const { user } = useAuth();
+    const [crops, setCrops] = useState<Crop[]>([]);
+    const [expenses, setExpenses] = useState<Expense[]>([]);
+    const [incomes, setIncomes] = useState<Income[]>([]);
+    const [inventory, setInventory] = useState<InventoryItem[]>([]);
+
+    const addCrop = async (cropData: Omit<Crop, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<Crop> => {
+      if (!user) throw new Error('User must be logged in');
+      
+      const newCrop: Crop = {
+        id: Date.now().toString(),
+        userId: user.id,
+        ...cropData,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      
+      setCrops((prevCrops) => [...prevCrops, newCrop]);
+      return newCrop;
     };
-    
-    setCrops((prevCrops) => [...prevCrops, newCrop]);
-    return newCrop;
-  };
 
-  // Add a new expense
-  const addExpense = async (expenseData: Omit<Expense, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<Expense> => {
-    if (!user) throw new Error('User must be logged in');
-    
-    const newExpense: Expense = {
-      id: Date.now().toString(),
-      userId: user.id,
-      ...expenseData,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+    const addExpense = async (
+      expenseData: Omit<Expense, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
+    ): Promise<Expense> => {
+      if (!user) throw new Error('User must be logged in');
+      const newExpense: Expense = {
+        id: Date.now().toString(),
+        userId: user.id,
+        ...expenseData,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      setExpenses((prev) => [...prev, newExpense]);
+      return newExpense;
     };
-    
-    setExpenses((prevExpenses) => [...prevExpenses, newExpense]);
-    return newExpense;
-  };
 
-  // Add a new income
-  const addIncome = async (incomeData: Omit<Income, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<Income> => {
-    if (!user) throw new Error('User must be logged in');
-    
-    const newIncome: Income = {
-      id: Date.now().toString(),
-      userId: user.id,
-      ...incomeData,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+    const addIncome = async (
+      incomeData: Omit<Income, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
+    ): Promise<Income> => {
+      if (!user) throw new Error('User must be logged in');
+      const newIncome: Income = {
+        id: Date.now().toString(),
+        userId: user.id,
+        ...incomeData,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      setIncomes((prev) => [...prev, newIncome]);
+      return newIncome;
     };
-    
-    setIncomes((prevIncomes) => [...prevIncomes, newIncome]);
-    return newIncome;
-  };
 
-  // Calculate total expenses
-  const getTotalExpenses = (cropId?: string): number => {
-    return expenses
-      .filter((expense) => !cropId || expense.cropId === cropId)
-      .reduce((total, expense) => total + expense.amount, 0);
-  };
+    const addInventoryItem = async (
+      item: Omit<InventoryItem, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
+    ): Promise<InventoryItem> => {
+      if (!user) throw new Error('User must be logged in');
+      const newItem: InventoryItem = {
+        id: Date.now().toString(),
+        userId: user.id,
+        ...item,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      setInventory((prev) => [...prev, newItem]);
+      return newItem;
+    };
 
-  // Calculate total income
-  const getTotalIncome = (cropId?: string): number => {
-    return incomes
-      .filter((income) => !cropId || income.cropId === cropId)
-      .reduce((total, income) => total + income.amount, 0);
-  };
+    const getTotalExpenses = (cropId?: string): number => {
+      return expenses
+        .filter((e) => !cropId || e.cropId === cropId)
+        .reduce((sum, e) => sum + e.amount, 0);
+    };
 
-  // Calculate profit
-  const getProfit = (cropId?: string): number => {
-    return getTotalIncome(cropId) - getTotalExpenses(cropId);
-  };
+    const getTotalIncome = (cropId?: string): number => {
+      return incomes
+        .filter((i) => !cropId || i.cropId === cropId)
+        .reduce((sum, i) => sum + i.amount, 0);
+    };
 
-  const value: DataContextType = {
-    crops,
-    expenses,
-    incomes,
-    addCrop,
-    addExpense,
-    addIncome,
-    getTotalExpenses,
-    getTotalIncome,
-    getProfit,
-  };
+    const getProfit = (cropId?: string): number => {
+      return getTotalIncome(cropId) - getTotalExpenses(cropId);
+    };
 
-  return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
-};
+    const value: DataContextType = {
+      crops,
+      expenses,
+      incomes,
+      inventory,
+      addCrop,
+      addExpense,
+      addIncome,
+      addInventoryItem,
+      getTotalExpenses,
+      getTotalIncome,
+      getProfit,
+    };
+
+    return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
+  };

@@ -23,7 +23,7 @@ const NAV_ITEMS = [
   { title: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard className="h-5 w-5" /> },
   { title: 'Crops', href: '/crops', icon: <Leaf className="h-5 w-5" /> },
   { title: 'Expenses', href: '/expenses', icon: <ArrowDownCircle className="h-5 w-5" /> },
-  { title: 'Income', href: '/income', icon: <ArrowUpCircle className="h-5 w-5" /> },
+  { title: 'Income', href: '/income/IncomeList', icon: <ArrowUpCircle className="h-5 w-5" /> },
   { title: 'Reports', href: '/reports/profit-loss', icon: <BarChart3 className="h-5 w-5" /> },
   { title: 'Profile', href: '/profile', icon: <User className="h-5 w-5" /> },
 ];

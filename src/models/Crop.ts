@@ -7,6 +7,7 @@ export interface Crop {
   areaUnit: string;
   plantingDate: Date;
   season: string;
+  expectedHarvestDate: Date;
   status: 'active' | 'harvested';
   notes?: string;
   createdAt: Date;
